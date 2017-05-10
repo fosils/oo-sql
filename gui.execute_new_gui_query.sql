@@ -12,13 +12,13 @@ BEGIN
     IF NEW.name <> '' AND f_need_update AND COALESCE(NEW.query, '') <> '' THEN
         PERFORM gui.create_view(NEW.name, NEW.query);
         INSERT INTO gui.windows_history (category, name, query) VALUES (NEW.category, NEW.name, NEW.query);
-				IF OLD.query IS DISTINCT FROM NEW.query THEN
-					PERFORM gui.open_new_window(get_current_user(), NEW.id);
-				END IF;
+        IF OLD.query IS DISTINCT FROM NEW.query THEN
+            PERFORM gui.open_new_window(get_current_user(), NEW.id);
+        END IF;
     END IF;
     IF COALESCE(NEW.fk_queries, '') <> '' AND OLD.fk_queries IS DISTINCT FROM NEW.fk_queries THEN
         FOR f_query IN SELECT unnest(string_to_array(NEW.fk_queries, ';')) AS q LOOP
-	    EXECUTE f_query.q;
+            EXECUTE f_query.q;
         END LOOP;
     END IF;
     RETURN NEW;
