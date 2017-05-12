@@ -1,12 +1,16 @@
 CREATE OR REPLACE FUNCTION public.customer_authorization(extra_packages_previous_year character varying[], extra_packages_current_year character varying[], service_package_previous_year character varying, service_package_current_year character varying, company_type company_type_enum, has_non_equity_employees character varying, vat_type character varying)
  RETURNS character varying[]
  LANGUAGE plpgsql
+ IMMUTABLE
 AS $function$
 DECLARE
-    v_return varchar[] = '{}';
+    v_return varchar[] := '{}';
 BEGIN
     IF service_package_previous_year <> 'whitelabel' AND service_package_current_year <> 'whitelabel' THEN
-        IF has_non_equity_employees IN ('Unknown', 'Yes') THEN
+        IF service_package_previous_year NOT IN ('Holding', 'Privat selvangivelse', 'Only annual rental') AND
+           service_package_current_year NOT IN ('Holding', 'Privat selvangivelse', 'Only annual rental') AND
+           has_non_equity_employees IN ('unknown', 'yes')
+        THEN
             v_return := v_return || '{e-indkomst}';
         END IF;
         IF vat_type IN ('Lønsum') THEN
@@ -37,7 +41,7 @@ BEGIN
             v_return := v_return || '{moms}';
         END IF;
 
-        IF v_return = '{}' THEN
+        IF v_return = '{}' AND has_non_equity_employees <> 'no' THEN
             v_return := '{unknown}';
         END IF;
     END IF;
