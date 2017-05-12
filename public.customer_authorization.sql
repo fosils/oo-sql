@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION public.customer_authorization(extra_packages_previous_year character varying[], extra_packages_current_year character varying[], service_package_previous_year character varying, service_package_current_year character varying, company_type company_type_enum, has_non_equity_employees character varying, vat_type character varying)
+CREATE OR REPLACE FUNCTION crm.customer_authorization(extra_packages_previous_year character varying[], extra_packages_current_year character varying[], service_package_previous_year character varying, service_package_current_year character varying, company_type company_type_enum, has_non_equity_employees character varying, vat_type character varying)
  RETURNS character varying[]
  LANGUAGE plpgsql
  IMMUTABLE
